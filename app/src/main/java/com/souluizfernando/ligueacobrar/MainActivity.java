@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Build;
 import android.provider.ContactsContract;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -28,6 +29,7 @@ import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -108,6 +110,22 @@ public class MainActivity extends FragmentActivity {
         public ContactsFragment(){
 
         }
+
+        @Override
+        public View getView() {
+            final View v  = super.getView();
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    TextView name = (TextView) v.findViewById(R.id.name);
+                    TextView number = (TextView) v.findViewById(R.id.number);
+                    Log.d(name.getText().toString(),number.getText().toString());
+                }
+            });
+
+            return v;
+        }
+
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstaceState){
@@ -142,15 +160,14 @@ public class MainActivity extends FragmentActivity {
                         mContactsList = (ListView) getActivity().findViewById(R.id.mainFragment);
                         String[] FROM_COLUMNS = new String[]{cName, cNumber};
                         int[] TO_IDS = new int[]{
-                                R.id.name1,
-                                R.id.number1
+                                R.id.name,
+                                R.id.number
                         };
-                        mCursorAdapter = new SimpleCursorAdapter(
+                        mCursorAdapter = new ContactsAdapter(
                                 getActivity(),
                                 R.layout.contact_list_item,
                                 cursor,
-                                FROM_COLUMNS, TO_IDS,
-                                0);
+                                FROM_COLUMNS, TO_IDS);
                         mContactsList.setAdapter(mCursorAdapter);
                 }
             });

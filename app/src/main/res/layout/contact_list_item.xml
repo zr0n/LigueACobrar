@@ -4,13 +4,13 @@
     android:clickable="true"
     android:layout_height="match_parent">
     <TextView
-        android:id="@+id/name1"
+        android:id="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Placeholder"
         />
     <TextView
-        android:id="@+id/number1"
+        android:id="@+id/number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="+55 21 97212 7734"
