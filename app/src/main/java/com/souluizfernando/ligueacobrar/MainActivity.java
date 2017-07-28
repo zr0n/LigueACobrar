@@ -42,7 +42,6 @@ import static java.lang.Long.getLong;
 
 public class MainActivity extends FragmentActivity
     implements AdapterView.OnItemSelectedListener{
-
     final int MY_PERMISSION_TO_READ_CONTACTS = 666;
     final String[] PERMISSIONS_NEEDED = new String[]{
             Manifest.permission.READ_CONTACTS,
@@ -50,6 +49,7 @@ public class MainActivity extends FragmentActivity
             Manifest.permission.READ_SMS,
             Manifest.permission.CALL_PHONE
     };
+    final static String GET_ALL_CONTACTS = "1 = 1";
     public String operadoraCode;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +90,7 @@ public class MainActivity extends FragmentActivity
         spinner.setOnItemSelectedListener(this);
         final EditText search = (EditText) findViewById(R.id.editText);
         final ContactsFragment cf = (ContactsFragment) getSupportFragmentManager().findFragmentById(R.id.mainFragment);
-        cf.setSearchTerm("%"); //get All Contacts
+        cf.setSearchTerm(GET_ALL_CONTACTS); //get All Contacts
         search.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -190,8 +190,14 @@ public class MainActivity extends FragmentActivity
                                         ContactsContract.Contacts.DISPLAY_NAME_PRIMARY :
                                         ContactsContract.Contacts.DISPLAY_NAME
                         };
-                        String selection = ContactsContract.Contacts.DISPLAY_NAME +
-                                " LIKE '%"+mSearchTerm+"%'";
+                        String selection;
+                        if(mSearchTerm.equals(GET_ALL_CONTACTS) || mSearchTerm.length() == 0){
+                            selection = GET_ALL_CONTACTS;
+                        }
+                        else{
+                            selection = ContactsContract.Contacts.DISPLAY_NAME +
+                                    " LIKE '%"+mSearchTerm+"%'";
+                        }
                         ContentResolver cr = getContext().getContentResolver();
                         Cursor cursor = cr.query(
                                 ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
