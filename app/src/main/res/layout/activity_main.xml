@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    tools:context="com.souluizfernando.ligueacobrar.MainActivity">
+
+    <EditText
+        android:id="@+id/editText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/hint_search"
+        android:inputType="textPersonName"
+        tools:layout_editor_absoluteY="0dp"
+        tools:layout_editor_absoluteX="8dp" />
+    <fragment
+        android:id="@+id/mainFragment"
+        android:layout_width="wrap_content"
+        class="com.souluizfernando.ligueacobrar.MainActivity$ContactsFragment"
+        tools:layout="@layout/contact_list_view"
+        android:layout_height="wrap_content"></fragment>
+</LinearLayout>
