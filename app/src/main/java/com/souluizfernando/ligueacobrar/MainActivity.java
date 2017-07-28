@@ -90,6 +90,7 @@ public class MainActivity extends FragmentActivity
         spinner.setOnItemSelectedListener(this);
         final EditText search = (EditText) findViewById(R.id.editText);
         final ContactsFragment cf = (ContactsFragment) getSupportFragmentManager().findFragmentById(R.id.mainFragment);
+        cf.setSearchTerm("%"); //get All Contacts
         search.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
