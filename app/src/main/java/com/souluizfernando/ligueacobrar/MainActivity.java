@@ -25,19 +25,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static java.lang.Long.getLong;
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends FragmentActivity
+    implements AdapterView.OnItemSelectedListener{
 
     final int MY_PERMISSION_TO_READ_CONTACTS = 666;
     final String[] PERMISSIONS_NEEDED = new String[]{
@@ -46,12 +50,13 @@ public class MainActivity extends FragmentActivity {
             Manifest.permission.READ_SMS,
             Manifest.permission.CALL_PHONE
     };
+    public String operadoraCode;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         if(VerifyPermissions()){
-            setupListener();
+            setupListeners();
         }
     }
     @Override
@@ -68,15 +73,21 @@ public class MainActivity extends FragmentActivity {
                 }
             }
             if(granted){
-                setupListener();
+                setupListeners();
                 return;
             }
         }
         if(VerifyPermissions()){
-            setupListener();
+            setupListeners();
         }
     }
-    private void setupListener(){
+    private void setupListeners(){
+        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.operadoras, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(this);
         final EditText search = (EditText) findViewById(R.id.editText);
         final ContactsFragment cf = (ContactsFragment) getSupportFragmentManager().findFragmentById(R.id.mainFragment);
         search.addTextChangedListener(new TextWatcher() {
@@ -110,6 +121,26 @@ public class MainActivity extends FragmentActivity {
         }
         return true;
     }
+
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+        String operadora = adapterView.getSelectedItem().toString();
+        Pattern pattern = Pattern.compile("^\\(([0-9]+)\\)");
+        Matcher matcher = pattern.matcher(operadora);
+        if(matcher.find()){
+            operadoraCode = matcher.group(1);
+        }
+        else{
+            operadoraCode = "21";
+        }
+        Log.d("Operadora Selecionada: ", operadoraCode);
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+
+    }
+
     public static class ContactsFragment extends Fragment {
         private ListView mContactsList;
         private SimpleCursorAdapter mCursorAdapter;

@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_horizontal"
+    android:gravity="top"
+    android:padding="5dp"
     android:orientation="vertical"
     tools:context="com.souluizfernando.ligueacobrar.MainActivity">
 
@@ -14,9 +15,19 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="@string/hint_search"
-        android:inputType="textPersonName"
-        tools:layout_editor_absoluteY="0dp"
-        tools:layout_editor_absoluteX="8dp" />
+        android:inputType="textPersonName"/>
+    <TextView
+        android:text="@string/enter_operadora"
+        android:layout_width="match_parent"
+        android:textSize="15sp"
+        android:textAlignment="center"
+        android:layout_height="wrap_content" />
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:prompt="@string/enter_operadora">
+    </Spinner>
     <fragment
         android:id="@+id/mainFragment"
         android:layout_width="match_parent"

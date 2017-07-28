@@ -22,11 +22,15 @@ import java.util.regex.Pattern;
  */
 
 public class ContactsAdapter extends SimpleCursorAdapter{
-    Context mContext;
-    String operadora = "21";
+    MainActivity mContext;
+    String operadora;
     public ContactsAdapter(Context context, int layout, Cursor c, String[] from, int[] to) {
         super(context, layout, c, from, to);
-        mContext = context;
+        mContext = (MainActivity) context;
+    }
+
+    public void setOperadora(String operadora) {
+        this.operadora = operadora;
     }
 
     @Override
@@ -35,6 +39,7 @@ public class ContactsAdapter extends SimpleCursorAdapter{
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    setOperadora(mContext.operadoraCode);
                     TextView name = (TextView) view.findViewById(R.id.name);
                     TextView number = (TextView) view.findViewById(R.id.number);
                     TelephonyManager tm = (TelephonyManager) mContext.getSystemService(

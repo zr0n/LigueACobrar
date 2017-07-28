@@ -1,4 +1,17 @@
 <resources>
-    <string name="app_name">LigueACobrar</string>
+    <string name="app_name">Ligue a Cobrar</string>
     <string name="hint_search">Nome do contato</string>
+    <string name="enter_operadora">Selecione o DDD da operadora \r\n (apenas quando for interurbano)</string>
+    <string-array name="operadoras">
+        <item>(15) Vivo</item>
+        <item>(21) Claro</item>
+        <item>(31) Oi</item>
+        <item>(41) Tim</item>
+        <item>(32) Convergia</item>
+        <item>(23) Intelig-Tim</item>
+        <item>(12) CTBC Telecom</item>
+        <item>(25) GVT</item>
+        <item>(17) Aerotech</item>
+        <item>(43) Sercomtel</item>
+    </string-array>
 </resources>
