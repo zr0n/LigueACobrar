@@ -40,12 +40,16 @@ import static java.lang.Long.getLong;
 public class MainActivity extends FragmentActivity {
 
     final int MY_PERMISSION_TO_READ_CONTACTS = 666;
-
+    final String[] PERMISSIONS_NEEDED = new String[]{
+            Manifest.permission.READ_CONTACTS,
+            Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.READ_SMS,
+            Manifest.permission.CALL_PHONE
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         if(VerifyPermissions()){
             setupListener();
         }
@@ -54,8 +58,16 @@ public class MainActivity extends FragmentActivity {
     public void onRequestPermissionsResult(int requestCode,
                String[] permissions, int[] grantResults){
         if(requestCode == MY_PERMISSION_TO_READ_CONTACTS){
-            if(grantResults.length > 0 &&
-                    grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            Boolean granted = false;
+            if(grantResults.length > 0){
+                granted = true;
+                for(int i = 0; i < grantResults.length; i++){
+                    if(grantResults[i] == PackageManager.PERMISSION_DENIED){
+                        granted = false;
+                    }
+                }
+            }
+            if(granted){
                 setupListener();
                 return;
             }
@@ -86,13 +98,15 @@ public class MainActivity extends FragmentActivity {
         });
     }
     private Boolean VerifyPermissions(){
-        int permissionCheck = ContextCompat.checkSelfPermission(MainActivity.this,
-                Manifest.permission.READ_CONTACTS);
-        if(permissionCheck == PackageManager.PERMISSION_DENIED){
-            ActivityCompat.requestPermissions(MainActivity.this,
-                    new String[]{Manifest.permission.READ_CONTACTS},
-                    MY_PERMISSION_TO_READ_CONTACTS);
-            return false;
+        for(int i = 0; i < PERMISSIONS_NEEDED.length; i++){
+            String permission = PERMISSIONS_NEEDED[i];
+            int permissionCheck = ContextCompat.checkSelfPermission(MainActivity.this, permission);
+            if(permissionCheck == PackageManager.PERMISSION_DENIED){
+                ActivityCompat.requestPermissions(MainActivity.this,
+                        PERMISSIONS_NEEDED,
+                        MY_PERMISSION_TO_READ_CONTACTS);
+                return false;
+            }
         }
         return true;
     }
@@ -104,8 +118,6 @@ public class MainActivity extends FragmentActivity {
                 ContactsContract.Contacts.DISPLAY_NAME_PRIMARY + " LIKE ?":
                 ContactsContract.Contacts.DISPLAY_NAME + " LIKE ?";
         private static String mSearchTerm;
-
-
 
         public ContactsFragment(){
 

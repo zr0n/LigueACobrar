@@ -5,11 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
+    android:orientation="vertical"
     tools:context="com.souluizfernando.ligueacobrar.MainActivity">
 
     <EditText
         android:id="@+id/editText"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="@string/hint_search"
@@ -18,7 +19,7 @@
         tools:layout_editor_absoluteX="8dp" />
     <fragment
         android:id="@+id/mainFragment"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         class="com.souluizfernando.ligueacobrar.MainActivity$ContactsFragment"
         tools:layout="@layout/contact_list_view"
         android:layout_height="wrap_content"></fragment>
