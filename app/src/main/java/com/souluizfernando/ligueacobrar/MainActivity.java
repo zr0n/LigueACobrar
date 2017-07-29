@@ -183,29 +183,30 @@ public class MainActivity extends FragmentActivity
             Thread searchThread = new Thread(new Runnable() {
                 @Override
                 public void run() {
+                        String cName = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ?
+                                ContactsContract.Contacts.DISPLAY_NAME_PRIMARY :
+                                ContactsContract.Contacts.DISPLAY_NAME;
                         String[] projection = new String[]{
                                 ContactsContract.CommonDataKinds.Phone.NUMBER,
                                 ContactsContract.CommonDataKinds.Phone._ID,
-                                Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ?
-                                        ContactsContract.Contacts.DISPLAY_NAME_PRIMARY :
-                                        ContactsContract.Contacts.DISPLAY_NAME
+                                cName
+
                         };
                         String selection;
                         if(mSearchTerm.equals(GET_ALL_CONTACTS) || mSearchTerm.length() == 0){
                             selection = GET_ALL_CONTACTS;
                         }
                         else{
-                            selection = ContactsContract.Contacts.DISPLAY_NAME +
-                                    " LIKE '%"+mSearchTerm+"%'";
+                            selection = like(ContactsContract.Contacts.DISPLAY_NAME, mSearchTerm);
                         }
+                        Log.d("Selection: ", selection);
                         ContentResolver cr = getContext().getContentResolver();
                         Cursor cursor = cr.query(
                                 ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
                                 projection,
                                 selection,
                                 null,
-                                null);
-                        String cName = ContactsContract.Contacts.DISPLAY_NAME;
+                                orderBy(cName));
                         String cNumber = ContactsContract.CommonDataKinds.Phone.NUMBER;
                         mContactsList = (ListView) getActivity().findViewById(R.id.mainFragment);
                         String[] FROM_COLUMNS = new String[]{cName, cNumber};
@@ -219,6 +220,12 @@ public class MainActivity extends FragmentActivity
                                 cursor,
                                 FROM_COLUMNS, TO_IDS);
                         mContactsList.setAdapter(mCursorAdapter);
+                }
+                private String orderBy(String name){
+                    return name + " ASC";
+                }
+                private String like(String name, String term){
+                    return name + " LIKE '%"+term+"%'";
                 }
             });
             searchThread.run();
