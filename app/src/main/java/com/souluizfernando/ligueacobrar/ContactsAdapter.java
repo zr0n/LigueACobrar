@@ -35,6 +35,8 @@ public class ContactsAdapter extends ArrayAdapter<String[]>{
     ArrayList<String[]> data;
     Context main;
     int resourceId;
+    final int NAME_INDEX = 0;
+    final int NUMBER_INDEX = 1;
 
     public ContactsAdapter(@NonNull Context context, @LayoutRes int resource, @NonNull ArrayList<String[]> objects, Activity activity) {
         super(context, resource, objects);
@@ -57,18 +59,12 @@ public class ContactsAdapter extends ArrayAdapter<String[]>{
         else{
             element = (LinearLayout) convertView;
         }
-        if(element == null){
-            return super.getView(position, element, parent);
-        }
-        element.removeAllViews();
         setOnClickListener(element);
-        inflater.inflate(R.layout.list_text_1, element);
-        inflater.inflate(R.layout.list_text_2, element);
         TextView nameView = element.findViewById(R.id.name);
         TextView numberView = element.findViewById(R.id.number);
         String[] rowData = data.get(position);
-        nameView.setText(rowData[0]);
-        numberView.setText(rowData[1]);
+        nameView.setText(rowData[NAME_INDEX]);
+        numberView.setText(rowData[NUMBER_INDEX]);
         return element;
     }
     private String getLocalCode(String phoneNumber){
