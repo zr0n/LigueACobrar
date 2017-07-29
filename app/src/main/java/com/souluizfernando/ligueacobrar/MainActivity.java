@@ -17,6 +17,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -50,12 +51,14 @@ public class MainActivity extends FragmentActivity
             Manifest.permission.CALL_PHONE
     };
     final static String GET_ALL_CONTACTS = "1 = 1";
+    static String myPhoneNumber;
     public String operadoraCode;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if(VerifyPermissions()){
+        if(VerifyPermissions()) {
+            myPhoneNumber = getMyPhoneNumber();
             setupListeners();
         }
     }
@@ -144,7 +147,6 @@ public class MainActivity extends FragmentActivity
 
     public static class ContactsFragment extends Fragment {
         private ListView mContactsList;
-        private SimpleCursorAdapter mCursorAdapter;
 
         protected static final String QUERY = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ?
                 ContactsContract.Contacts.DISPLAY_NAME_PRIMARY + " LIKE ?":
@@ -209,16 +211,12 @@ public class MainActivity extends FragmentActivity
                                 orderBy(cName));
                         String cNumber = ContactsContract.CommonDataKinds.Phone.NUMBER;
                         mContactsList = (ListView) getActivity().findViewById(R.id.mainFragment);
-                        String[] FROM_COLUMNS = new String[]{cName, cNumber};
-                        int[] TO_IDS = new int[]{
-                                R.id.name,
-                                R.id.number
-                        };
-                        mCursorAdapter = new ContactsAdapter(
+                        String[] columns = new String[]{cName, cNumber};
+                        ArrayAdapter mCursorAdapter = new ContactsAdapter(
                                 getActivity(),
-                                R.layout.contact_list_item,
-                                cursor,
-                                FROM_COLUMNS, TO_IDS);
+                                android.R.layout.simple_list_item_1,
+                                filterDuplicates(cursor, columns),
+                                getActivity());
                         mContactsList.setAdapter(mCursorAdapter);
                 }
                 private String orderBy(String name){
@@ -230,5 +228,64 @@ public class MainActivity extends FragmentActivity
             });
             searchThread.run();
         }
+    }
+    protected static ArrayList<String[]> filterDuplicates(Cursor c, String[] columns){
+        ArrayList<String> names = new ArrayList();
+        ArrayList<String> numbers = new ArrayList();
+        ArrayList<String[]> contactsArr = cursorToArrayList(c, columns);
+        ArrayList<String[]> uniques = new ArrayList<>();
+        for(int i = 0; i < contactsArr.size(); i++){
+            String currName = contactsArr.get(i)[0];
+            String currNumber = parseNumber(contactsArr.get(i)[1]);
+            Boolean unique = true;
+            for(int j = 0; j < names.size(); j++){
+                if(names.get(j).equals(currName)&& numbers.get(j).equals(currNumber)){
+                    unique = false;
+                }
+            }
+            if(unique){
+                names.add(currName);
+                numbers.add(currNumber);
+                uniques.add(new String[]{currName, contactsArr.get(i)[1]});
+            }
+        }
+        return uniques;
+    }
+    private static ArrayList<String[]> cursorToArrayList(Cursor c, String[] columns){
+        ArrayList<String[]> converted = new ArrayList<String[]>();
+        while(c.moveToNext()){
+            String[] row = new String[2];
+            row[0] = c.getString(c.getColumnIndex(columns[0]));
+            row[1] = c.getString(c.getColumnIndex(columns[1]));
+            converted.add(row);
+        }
+        return converted;
+    }
+    private static String parseNumber(String number){
+        String myPhoneNumber = MainActivity.myPhoneNumber;
+        String myLocal = getLocalCode(myPhoneNumber);
+        String parsed = number.replaceAll("\\W", ""); //only numbers or letters
+        if(parsed.length() < 10){
+            parsed = "55"+myLocal+parsed;
+        }
+        else if(parsed.length() < 12){
+            parsed = "55"+parsed;
+        }
+        return parsed;
+    }
+    protected String getMyPhoneNumber(){
+        TelephonyManager tm = (TelephonyManager) getSystemService(
+                Context.TELEPHONY_SERVICE);
+        return tm.getLine1Number();
+    }
+    protected static String getLocalCode(String phoneNumber){
+        String patternString = "^55([0-9]{2})[0-9]{8,9}$";
+        Pattern pattern = Pattern.compile(patternString);
+        Matcher matcher = pattern.matcher(phoneNumber);
+        if(matcher.find()){
+            String localCode = matcher.group(1);
+            return localCode;
+        }
+        return "";
     }
 }
