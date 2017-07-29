@@ -87,6 +87,7 @@ public class ContactsAdapter extends ArrayAdapter<String[]>{
     }
 
     private void setOnClickListener(View view) {
+        final MainActivity mContext = (MainActivity) main;
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
